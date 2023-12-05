@@ -1,0 +1,43 @@
+import pandas as pd
+from sklearn.linear_model import Perceptron
+
+df = pd.read_csv("Social_Network_Ads.csv", sep=",")
+
+df = df.drop(columns="User ID")
+
+
+dummy_columns = {
+    'Gender': {
+        'prefix': 'Gen',
+        'sep': ','
+    }
+    
+}
+
+for column_name, dummy_data in dummy_columns.items():
+
+    dummies = df[column_name].str.get_dummies(sep=dummy_data['sep'])
+    #dummies.columns = map(lambda col: f'{dummy_data["prefix"]}_{col}', dummies.columns)
+    
+    df = pd.concat([dummies, df], axis=1)
+    
+
+
+df = df.drop(columns=dummy_columns.keys())
+
+
+df.head()
+
+#print(df)
+
+xtrain = df.iloc[0:319, 0:4]
+ytrain = df.iloc[0:319, 4]
+xtest = df.iloc[320:499, 0:4]
+ytest = df.iloc[320:499, 4]
+
+
+
+clf = Perceptron(tol=1e-3, random_state=0)
+clf.fit(xtrain, ytrain)
+Perceptron()
+print(clf.score(xtrain, ytrain))
